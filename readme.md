@@ -3,7 +3,7 @@
 
 ###开发命令
 - $ npm run dev + gulp         : 前端本地开发的命令  mac
-- $ npm run dev + gulp         : 前端本地开发的命令  windows
+- $ npm run win_dev + gulp     : 前端本地开发的命令  windows
 - $ gulp deploy  : 前端发布的命令
 
 ###
