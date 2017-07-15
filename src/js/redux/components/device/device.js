@@ -1,115 +1,104 @@
 import React from 'react';
 import { Link } from 'react-router';
-import { Input, Select, Button, Layout, Table, Icon, Breadcrumb, TreeSelect, Dropdown, Row, Col, Card, Popconfirm } from 'antd';
+import { Input, Select, Button, Layout, Table, Icon, Breadcrumb, TreeSelect, Dropdown, Row, Col, Card, Popconfirm, Cascader } from 'antd';
 import Nav from '../common/pc_nav';
 import * as config from 'config/app.config.js';
+import Add from './add'
+import { getDeviceList } from 'actions/index';
 
 const { Content, Sider } = Layout;
 const Search = Input.Search;
-const treeData = [{
-  label: '设备状态',
-  value: '0-0',
-  key: '0-0',
-  children: [{
-    label: '正常',
-    value: '0-0-1',
-    key: '0-0-1',
-  }, {
-    label: '不正常',
-    value: '0-0-2',
-    key: '0-0-2',
-  }, {
-    label: '未登记',
-    value: '0-0-3',
-    key: '0-0-3',
-  }],
-}, {
-  label: '部门',
-  value: '0-1',
-  key: '0-1',
-  children: [{
-    label: 'A部门',
-    value: '0-0-1',
-    key: '0-0-1',
-  }, {
-    label: 'B部门',
-    value: '0-0-2',
-    key: '0-0-2',
-  }, {
-    label: 'C部门',
-    value: '0-0-3',
-    key: '0-0-3',
-  }]
-}];
-
+const treeData = [];
 const statusData = [{
+  label: "全选",
+  value: '',
+  key: '0-0-0'
+}, {
   label: '正常',
-  value: '0-0-1',
+  value: '正常',
   key: '0-0-1',
 }, {
   label: '不正常',
-  value: '0-0-2',
+  value: '不正常',
   key: '0-0-2',
 }, {
   label: '未登记',
-  value: '0-0-3',
+  value: '未登记',
   key: '0-0-3',
+}];
+const typeData = [{
+  label: "全选",
+  value: '',
+  key: '0-0-4',
+}, {
+  label: "桌面式",
+  value: '桌面式',
+  key: '0-0-5',
+}, {
+  label: "固定式",
+  value: '固定式',
+  key: '0-0-6',
+}, {
+  label: "多通道",
+  value: '多通道',
+  key: '0-0-7',
 }];
 
 const orgData = [{
   label: '深圳',
-  value: '0-0',
+  value: '深圳',
   key: '0-0',
   children: [{
     label: '科技园',
-    value: '0-0-1',
+    value: '科技园',
     key: '0-0-1',
     children: [{
       label: '研发部',
-      value: '0-0-0-1',
+      value: '研发部',
       key: '0-0-0-1',
     }, {
       label: '生产部',
-      value: '0-0-0-2',
+      value: '生产部',
       key: '0-0-0-2',
     }, {
       label: '销售部',
-      value: '0-0-0-3',
+      value: '销售部',
       key: '0-0-0-3',
     }]
   }, {
     label: '海岸城',
-    value: '0-0-2',
+    value: '海岸城',
     key: '0-0-2',
   }]
 }, {
   label: '北京',
-  value: '0-1',
+  value: '北京',
   key: '0-1',
   children: [{
-    label: 'A部门',
-    value: '0-1-1',
-    key: '0-1-1',
-  }, {
-    label: 'B部门',
-    value: '0-2-2',
+    label: '科技园',
+    value: '科技园',
     key: '0-2-2',
     children: [{
-      label: 'B1',
-      value: '0-2-2-1',
+      label: '研发部',
+      value: '研发部',
       key: '0-2-2-1',
     }, {
-      label: 'B2',
-      value: '0-2-2-2',
+      label: '生产部',
+      value: '生产部',
       key: '0-2-2-2',
     }, {
-      label: 'B3',
-      value: '0-2-2-3',
+      label: '销售部',
+      value: '销售部',
       key: '0-2-2-3',
     }]
   }, {
-    label: 'C部门',
-    value: '0-2-3',
+    label: 'A部门',
+    value: 'A部门',
+    key: '0-1-1',
+  },
+  {
+    label: 'B部门',
+    value: 'B部门',
     key: '0-2-3',
   }]
 }];
@@ -118,57 +107,112 @@ const deviceData = [{
   id: 1,
   key: 1,
   name: 'R2000',
-  type: '桌面式读写器',
+  type: '桌面式',
   status: '正常',
   last_update_time: '2017-01-01 12:00',
-  org: 'A部门',
+  org: '深圳科技园研发部',
   location: '* * *',
 }, {
   id: 2,
   key: 2,
   name: 'F5019-H',
-  type: '固定式一体化读写器',
-  status: '不正常',
+  type: '固定式',
+  status: '正常',
   last_update_time: '2017-01-01 12:00',
-  org: 'B部门',
+  org: '深圳科技园生产部',
   location: '* * *',
 }, {
   id: 3,
   key: 3,
   name: 'F5880-H',
-  type: '固定式多通道读写器',
+  type: '多通道',
   status: '未登记',
   last_update_time: '2017-01-01 12:00',
-  org: 'C部门',
+  org: '深圳科技园销售部',
   location: '* * *',
 }, {
   id: 4,
   key: 4,
   name: 'R2000',
-  type: '桌面式读写器',
+  type: '桌面式',
   status: '正常',
   last_update_time: '2017-01-01 12:00',
-  org: 'A部门',
+  org: '深圳科技园研发部',
   location: '* * *',
 }, {
   id: 5,
   key: 5,
   name: 'F5019-H',
-  type: '固定式一体化读写器',
-  status: '不正常',
+  type: '固定式',
+  status: '正常',
   last_update_time: '2017-01-01 12:00',
-  org: 'B部门',
+  org: '北京科技园研发部',
   location: '* * *',
 }, {
   id: 6,
   key: 6,
   name: 'F5880-H',
-  type: '固定式多通道读写器',
+  type: '多通道',
   status: '未登记',
   last_update_time: '2017-01-01 12:00',
-  org: 'C部门',
+  org: '北京科技园生产部',
+  location: '* * *',
+}, {
+  id: 7,
+  key: 7,
+  name: 'R2000',
+  type: '多通道',
+  status: '不正常',
+  last_update_time: '2017-01-01 12:00',
+  org: '北京科技园生产部',
+  location: '* * *',
+}, {
+  id: 8,
+  key: 8,
+  name: 'R2000',
+  type: '多通道',
+  status: '不正常',
+  last_update_time: '2017-01-01 12:00',
+  org: '北京科技园生产部',
+  location: '* * *',
+}, {
+  id: 9,
+  key: 9,
+  name: 'F5880-H',
+  type: '固定式',
+  status: '不正常',
+  last_update_time: '2017-01-01 12:00',
+  org: '北京科技园销售部',
+  location: '* * *',
+}, {
+  id: 10,
+  key: 10,
+  name: 'F5880-H',
+  type: '固定式',
+  status: '不正常',
+  last_update_time: '2017-01-01 12:00',
+  org: '北京A部门',
+  location: '* * *',
+}, {
+  id: 11,
+  key: 11,
+  name: 'F5880-H',
+  type: '固定式',
+  status: '正常',
+  last_update_time: '2017-01-01 12:00',
+  org: '北京A部门',
+  location: '* * *',
+}, {
+  id: 12,
+  key: 12,
+  name: 'F5880-H',
+  type: '固定式',
+  status: '未登记',
+  last_update_time: '2017-01-01 12:00',
+  org: '深圳科技园研发部',
   location: '* * *',
 }];
+
 
 const Option = Select.Option;
 class TopHeader extends React.Component {
@@ -189,15 +233,56 @@ class FilterHeader extends React.Component {
     super(props);
     this.state = {
       keyword: undefined,
+      searchText: '',
+      filtered: false,
+      value1: '',
+      value2: '',
+      valueOrg: '',
     }
   }
+
+  //搜索
+  onInputChange(e) {
+    this.setState({ searchText: e.target.value });
+    /*this.setState({ value1:e.target.value })*/
+  }
+
+  click() {
+    const searchText = this.state.searchText;
+    this.props.onSearch(searchText);
+  }
+  //搜索
+  //选择
+
+  onChangeFirst(valueFirst) {
+    this.setState({ value1: valueFirst });
+  }
+  onChangeTwo(valueTwo) {
+    this.setState({ value2: valueTwo });
+  }
+  onChangeOrg(valueOrg) {
+    const valueOrgs = valueOrg.join("");
+    this.setState({ valueOrg: valueOrgs });
+  }
+
+  onSelect() {
+    const { value1, value2, valueOrg } = this.state;
+    console.log(valueOrg);
+    this.props.searchBySelect(value1, value2, valueOrg);
+  }
+
+
   render() {
     return (
       <div className="panel search">
         <div style={{ lineHeight: 3 }}>
           <label>搜索设备：&nbsp; </label>
-          <Search placeholder="请输入关键字" style={{ maxWidth: 200, marginRight: 60 }} />
-          <Button type="primary" icon="search">Search</Button>
+          <Search placeholder="请输入关键字" style={{ maxWidth: 200, marginRight: 60 }}
+            value={this.state.searchText} 
+            onChange={this.onInputChange.bind(this)} 
+            onPressEnter={this.click.bind(this)} 
+            />
+          <Button type="primary" icon="search" onClick={this.onSelect.bind(this)}>Search</Button>
         </div>
         <div style={{ lineHeight: 3 }}>
 
@@ -209,17 +294,12 @@ class FilterHeader extends React.Component {
             placeholder="--请选择--"
             treeDefaultExpandAll
             class='space-right'
+            onChange={this.onChangeFirst.bind(this)}
+            value={this.state.value1}
           />
-
           <label style={{ marginLeft: 60 }}>所属部门：&nbsp; </label>
-          <TreeSelect
-            style={{ width: 200 }}
-            dropdownStyle={{ maxHeight: 600, overflow: 'auto' }}
-            treeData={orgData}
-            placeholder="--请选择--"
-            treeDefaultExpandAll
-            class='space-right'
-          />
+
+          <Cascader options={orgData} onChange={this.onChangeOrg.bind(this)} changeOnSelect />
         </div>
 
         <div style={{ lineHeight: 3 }}>
@@ -236,40 +316,43 @@ class FilterHeader extends React.Component {
           <TreeSelect
             style={{ width: 200 }}
             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
-            treeData={treeData}
+            treeData={typeData}
             placeholder="--请选择--"
             treeDefaultExpandAll
             class='space-right'
+            onChange={this.onChangeTwo.bind(this)}
+            value={this.state.value2}
           />
         </div>
 
       </div>
     )
   }
-  onChange(e) {
-    this.search({ keyword: e })
-  }
 }
 
-class ETable extends React.Component {
+class ListDevices extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       dataSource: deviceData,
+      figureSource: deviceData,
+      dataSourceTwo: deviceData,
       index: '',
       selectedRowKeys: [],
       selectedRows: [],
-      record: ''
+      record: '',
+      figure: 0,
+      number: 0
     };
-    this.onDelete = this.onDelete.bind(this);
-    this.onAdd = this.onAdd.bind(this);
 
+    this.onDelete = this.onDelete.bind(this);
+    this.addDevice = this.addDevice.bind(this);
     this.handleSelectedDelete = this.handleSelectedDelete.bind(this);
     this.columns = [{
       title: '编号',
       dataIndex: 'id',
       key: 'id',
-      render: id => <a href="#">{id}</a>,
+      // render: id => <a href="#">{id}</a>,
     }, {
       title: '设备名称',
       dataIndex: 'name',
@@ -277,7 +360,8 @@ class ETable extends React.Component {
     }, {
       title: '设备状态',
       dataIndex: 'status',
-      key: 'status'
+      key: 'status',
+      onFilter: null
     }, {
       title: '所属部门',
       dataIndex: 'org',
@@ -287,24 +371,29 @@ class ETable extends React.Component {
       dataIndex: 'type',
       key: 'type'
     }, {
-      title: '状态更新时间',
-      dataIndex: 'last_update_time',
-      key: 'last_update_time'
-    }, {
       title: '设备位置',
       dataIndex: 'location',
       key: 'location'
+    }, {
+      title: '设备影子',
+      dataIndex: 'metadata',
+      key: 'metadata',
+      render: (text, record, index) => (
+        <span>
+          <a href="#">编辑</a>
+        </span>
+      ),
     }, {
       title: '操作',
       key: 'action',
       render: (text, record, index) => (
         <div>
           <span>
-            <a href="#">查看</a>
+            <a href="#">禁用</a>
           </span>
           <span className="ant-divider" />
           <span>
-            <a href="#">编辑</a>
+            <a href="#">连接协议详情</a>
           </span>
           <span className="ant-divider" />
           <span>
@@ -313,36 +402,102 @@ class ETable extends React.Component {
             </Popconfirm>
 
           </span>
+
         </div>
       ),
     }];
   }
+
+
+
+    onSearch(searchText) {
+        // const {dataSource } = this.state;
+        let reg = new RegExp(searchText, 'gi');
+
+            this.setState({
+                dataSource: deviceData.map(function (record) {
+                    let type = record.type.match(reg);
+                    let org = record.org.match(reg);
+                    let Name = record.name.match(reg);
+                    let Status = record.status.match(reg);
+                    if (!type && !org && !Name && !Status) {
+
+                        return null;
+                    }
+                    return {
+                        status: record.status,
+                        org: record.org,
+                        name: record.name,
+                        location: record.location,
+                        last_update_time: record.last_update_time,
+                        id: record.id,
+                        type: record.type,
+                    };
+                }).filter(record => !!record),
+            });
+    }
+
+    searchBySelect(selectFirst, selectTwo, selectOrg) {
+
+        let regFirst = new RegExp('^' + selectFirst);
+        let regTwo = new RegExp(selectTwo);
+        let regThree = new RegExp(selectOrg);
+        console.log(regFirst);
+        // console.log(regTwo);
+        this.setState({
+            dataSource: deviceData.map(function (record) {
+                let Status = record.status.match(regFirst);
+                let type = record.type.match(regTwo);
+                let Org = record.org.match(regThree);
+                // console.log(record.org);
+                // console.log(Org);
+                if (!type || !Status || !Org) {
+                    return null;
+                } if (type) {
+                    return {
+                        status: record.status,
+                        org: record.org,
+                        name: record.name,
+                        location: record.location,
+                        last_update_time: record.last_update_time,
+                        id: record.id,
+                        type: record.type,
+                    }
+                }
+                if (Status) {
+                    return {
+                        status: record.status,
+                        org: record.org,
+                        name: record.name,
+                        location: record.location,
+                        last_update_time: record.last_update_time,
+                        id: record.id,
+                        type: record.type,
+                    }
+                }
+                if (Org) {
+                    return {
+                        status: record.status,
+                        org: record.org,
+                        name: record.name,
+                        location: record.location,
+                        last_update_time: record.last_update_time,
+                        id: record.id,
+                        type: record.type,
+                    }
+                }
+            }).filter(record => !!record),
+
+
+        });
+    }
+
 
   onDelete(index) {
     const dataSource = [...this.state.dataSource]
     dataSource.splice(index, 1);//index为获取的索引，后面的 1 是删除几行  
     this.setState({ dataSource });
   }
-
-  onAdd(event){//得到子元素传过来的值  
-      let array = [];  
-      let count = 0;  
-      this.state.dataSource.forEach(function (element) {  
-          Object.keys(element).some(function (key) {  
-              if (key === 'nid') {  
-                  count++;  
-                  array[count] = element.nid  
-              }  
-          })  
-      })  
-      let sortData =array.sort();//对遍历得到的数组进行排序  
-      let MaxData = sortData[(this.state.dataSource.length)-1]//取最后一位下标的值  
-      event.key=MaxData+1;  
-      event.nid = MaxData+1;  
-      this.setState({  
-            dataSource:[...this.state.dataSource,event]  
-        })  
-  }  
 
   handleSelectedDelete() {
     if (this.state.selectedRowKeys.length > 0) {
@@ -353,7 +508,12 @@ class ETable extends React.Component {
     else {
     }
   }
-
+  //增加设备
+  addDevice(comment) {
+    const dataSource = this.state.dataSource;
+    dataSource.unshift(comment);
+    this.setState({ dataSource })
+  }
   render() {
     const rowSelection = {
       onChange: (selectedRowKeys, selectedRows) => {
@@ -362,29 +522,53 @@ class ETable extends React.Component {
           selectedRows: selectedRows
         })
       },
-    }
+    };
     return (
       <div>
+        <FilterHeader dataForm={this.state.dataSource} 
+        onSearch={this.onSearch.bind(this)} 
+        searchBySelect={this.searchBySelect.bind(this)}/>
 
-        <Button type="primary" style={{ margin: 20 }} onClick={this.onAdd} >创建设备</Button>
+        <Row gutter={32} style={{ maxWidth: 1500, minWidth: 800, fontSize: 22, margin: 20 }}>
 
-        <Popconfirm title="设备删除后不能恢复，确定要删除所选设备吗？" onConfirm={this.handleSelectedDelete}  okText="删除" cancelText="取消">
-          <Button type="primary">删除设备</Button>
-        </Popconfirm>
-
-        <Button type="primary" style={{ margin: 20 }}>暂停设备</Button>
-        <Button type="primary">重启设备</Button>
+          <Col span={3}>
+            <Add addDevice={this.addDevice} />
+          </Col>
+          <Col span={2}>
+ {           // <Popconfirm title="设备删除后不能恢复，确定要删除所选设备吗？" 
+            // onConfirm={this.handleSelectedDelete} 
+            // okText="删除" cancelText="取消">
+            //   <Button type="primary" >删除</Button>
+            // </Popconfirm>
+          }
+          <Button >删除</Button>
+          </Col>
+          <Col span={2}>
+            <Button >暂停</Button>
+          </Col>
+          <Col span={2}>
+            <Button>重启</Button>
+          </Col>
+        </Row>
 
         <Table columns={this.columns}
           dataSource={this.state.dataSource}
-          rowSelection={rowSelection}
+          rowSelection={rowSelection} rowKey='id'
         />
 
-
       </div>
-
     );
   }
+
+  // componentDidMount(){
+  //   getDeviceList()
+  //   .done((data) => {
+  //      this.setState({dataSource: data})
+  //   })
+  //   .fail( msg => {
+  //     message(msg || '网络异常，请稍后再试')
+  //   })
+  // }
 
 }
 
@@ -408,9 +592,9 @@ export default class ManageDevice extends React.Component {
             <Nav />
           </Sider>
           <Content style={{ padding: '0 24px', minHeight: 280 }}>
-            <FilterHeader />
 
-            <ETable />
+
+            <ListDevices />
 
           </Content>
         </Layout>

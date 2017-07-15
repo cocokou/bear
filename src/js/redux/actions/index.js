@@ -19,3 +19,7 @@ export function getProductIngredients(){
 export function handleProductEvent(params){
   return post(url, 'handle_product_event', params);
 }
+
+export function getDeviceList(){
+  return post(url, 'mqtt_get_devices_for_org', { companyId: config.default_company_id });
+}

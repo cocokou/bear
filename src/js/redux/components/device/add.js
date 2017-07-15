@@ -1,53 +1,102 @@
-import React from 'react';
+import React, { PropTypes, Component } from 'react';
 import Nav from '../common/pc_nav';
-import { Steps,Form, Input, Tooltip, Layout,Icon,Breadcrumb, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete,Modal,DatePicker } from 'antd'; ///////////////////////////
+import { Steps, Form, Input, Tooltip, Layout, Icon, Breadcrumb, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, Modal, DatePicker } from 'antd';
+
 const FormItem = Form.Item;
 const Option = Select.Option;
 const AutoCompleteOption = AutoComplete.Option;
 const { Content, Sider } = Layout;
+
 //部门选择数据
-const residences = [{
-    value: 'zhejiang',
-    label: '部门1',
+const orgData = [{
+    label: '深圳',
+    value: '深圳',
+    key: '0-0',
     children: [{
-        value: 'hangzhou',
-        label: '部门1.1',
+        label: '科技园',
+        value: '科技园',
+        key: '0-0-1',
         children: [{
-            value: 'xihu',
-            label: '部门1.2',
-        }],
-    }],
+            label: '研发部',
+            value: '研发部',
+            key: '0-0-0-1',
+        }, {
+            label: '生产部',
+            value: '生产部',
+            key: '0-0-0-2',
+        }, {
+            label: '销售部',
+            value: '销售部',
+            key: '0-0-0-3',
+        }]
+    }, {
+        label: '海岸城',
+        value: '海岸城',
+        key: '0-0-2',
+    }]
 }, {
-    value: 'jiangsu',
-    label: '部门2',
+    label: '北京',
+    value: '北京',
+    key: '0-1',
     children: [{
-        value: 'nanjing',
-        label: '部门2.1',
+        label: '科技园',
+        value: '科技园',
+        key: '0-2-2',
         children: [{
-            value: 'zhonghuamen',
-            label: '部门2.2',
-        }],
-    }],
+            label: '研发部',
+            value: '研发部',
+            key: '0-2-2-1',
+        }, {
+            label: '生产部',
+            value: '生产部',
+            key: '0-2-2-2',
+        }, {
+            label: '销售部',
+            value: '销售部',
+            key: '0-2-2-3',
+        }]
+    }, {
+        label: 'A部门',
+        value: 'A部门',
+        key: '0-1-1',
+    },
+    {
+        label: 'B部门',
+        value: 'B部门',
+        key: '0-2-3',
+    }]
 }];
 
 
+const typeData = [{
+    label: "桌面式",
+    value: '桌面式',
+    key: '0-0-5',
+}, {
+    label: "固定式",
+    value: '固定式',
+    key: '0-0-6',
+}, {
+    label: "多通道",
+    value: '多通道',
+    key: '0-0-7',
+}];
+
 //进度条数据
 const Step = Steps.Step;
-
-
-class RegistrationForm extends React.Component {
-    constructor(props){
+class RegistrationForm extends Component {
+    constructor(props) {
         super(props);
         this.state = {
             confirmDirty: false,
             autoCompleteResult: [],
-            loading:false,
-            visible:false,
-            current:0,
-            username:'',
+            loading: false,
+            visible: false,
+            current: 0,
+            count: 12,
         };
     }
-
+         
     //进度条相关函数
     next() {
         const current = this.state.current + 1;
@@ -59,9 +108,9 @@ class RegistrationForm extends React.Component {
     }
 
     // 模态框相关函数
-    showModal(){
+    showModal() {
         this.setState({
-            visible:true,
+            visible: true,
         })
     }
     handleOk() {
@@ -70,44 +119,46 @@ class RegistrationForm extends React.Component {
             this.setState({ loading: false, visible: false });
         }, 3000);
     }
-    handleCancel(){
-        this.setState({visible:false})
+    handleCancel() {
+        this.setState({ visible: false })
     }
-    handleSubmit(e){
+
+    handleClear(){  
+        this.props.form.resetFields();  
+    } 
+
+    handleSubmit(e) {
         e.preventDefault();
-        console.log("aa");
-        alert("您已成功创建设备 "+this.props.form.getFieldValue('userName'));
-        console.log(this.props.form.getFieldsValue())
+        let count = this.state.count + 1;
+        this.setState({ count });
+
         this.props.form.validateFieldsAndScroll((err, values) => {
             if (!err) {
-                console.log('Received values of form: ', values);
-                this.setState({visible:false})
 
+                const comment = {
+                    id: count,
+                    key: count,
+                    name: values.name,
+                    status: '正常',
+                    type: values.type,
+                    org: values.org.join('')
+  
+                }
+                this.props.addDevice(comment)
+                console.log(values)
             }
         });
-
-    }
-    handleChange(e){
-
+        this.setState({ current: 0, visible: false, count: count })
+        this.props.form.resetFields()
     }
 
 
-    // handleWebsiteChange(value){
-    //     let autoCompleteResult;
-    //     if (!value) {
-    //         autoCompleteResult = [];
-    //     } else {
-    //         autoCompleteResult = ['.com', '.org', '.net'].map(domain => `${value}${domain}`);
-    //     }
-    //     this.setState({ autoCompleteResult });
-    // }
+ 
 
     render() {
-        const { getFieldDecorator,getFieldProps } = this.props.form;
-        const { current,visible} = this.state;
-        const config = {
-            rules: [{ type: 'object', required: true, message: '请选择时间' }],
-        };
+        const { getFieldDecorator } = this.props.form;
+        const { current, visible } = this.state;
+
         const formItemLayout = {
             labelCol: {
                 xs: { span: 24 },
@@ -118,62 +169,6 @@ class RegistrationForm extends React.Component {
                 sm: { span: 14 },
             },
         };
-
-        // const InforA=React.createClass({
-        //     render:function(){
-        //         return(
-        //
-        //             <FormItem
-        //                 {...formItemLayout}
-        //                 label={(
-        //                     <span>设备类型&nbsp;</span>
-        //                 )}
-        //                 hasFeedback
-        //             >
-        //                 {getFieldDecorator('nickname', {
-        //                     rules: [{ required: true, message: '请输入合适的类型', whitespace: true,min:2 }],
-        //                 })(
-        //                     <Input />
-        //                 )}
-        //             </FormItem>
-        //
-        //
-        //         )
-        //     }
-        // })
-        //
-        // const InforB=React.createClass({
-        //     render:function(){
-        //         return(
-        //             <FormItem
-        //                 {...formItemLayout}
-        //                 label="所属部门"
-        //             >
-        //                 {getFieldDecorator('residence', {
-        //                     initialValue: ['zhejiang', 'hangzhou', 'xihu'],
-        //                     rules: [{ type: 'array', required: true, message: '请填写所属部门' }],
-        //                 })(
-        //                     <Cascader options={residences} />
-        //                 )}
-        //             </FormItem>
-        //         )
-        //     }
-        // })
-        //
-        // const InforC=React.createClass({
-        //     render:function(){
-        //         return(
-        //             <FormItem
-        //                 {...formItemLayout}
-        //                 label="DatePicker"
-        //             >
-        //                 {getFieldDecorator('date-picker', config)(
-        //                     <DatePicker />
-        //                 )}
-        //             </FormItem>
-        //         )
-        //     }
-        // })
 
         const steps = [{
             title: '第一步',
@@ -186,7 +181,7 @@ class RegistrationForm extends React.Component {
             content: '',
         }];
 
-    return (
+        return (
             <div>
                 <Button type="primary" onClick={this.showModal.bind(this)}>新增设备</Button>
                 <Modal
@@ -196,84 +191,60 @@ class RegistrationForm extends React.Component {
                     onCancel={this.handleCancel.bind(this)}
                     footer={[
                         <div className="steps-action">
-                            {
-                                this.state.current < steps.length - 1
-                                &&
-                                <Button type="primary" onClick={() => this.next()}>下一步</Button>
-                            }
-                            {
-                                this.state.current === steps.length - 1
-                                &&
+                             
+                                <Button type="default" onClick={this.handleCancel.bind(this)}>取消</Button>
+                                                   
                                 <Button type="primary" onClick={this.handleSubmit.bind(this)}>确认</Button>
-                            }
-                            {
-                                this.state.current > 0
-                                &&
-                                <Button style={{ marginLeft: 8 }} onClick={() => this.prev()}>
-                                    返回
-                                </Button>
-                            }
-
+                            
                         </div>
                     ]}
                 >
-                    <Steps current={current}>
-                        {steps.map(item => <Step key={item.title} title={item.title} />)}
-                    </Steps>
-                    <div className="steps-content">
+            
+              
                         <Form>
-                            {
-                                this.state.current === steps.length -3
-                                &&
+                          
                                 <FormItem
-                                          {...formItemLayout}
-                                          label={(
-                                              <span>设备类型&nbsp;</span>
-                                          )}
-                                          hasFeedback
+                                    {...formItemLayout}
+                                    label={(
+                                        <span>设备名称&nbsp;</span>
+                                    )}
+                                    hasFeedback
                                 >
-                                    {getFieldDecorator('nickname', {
-                                        rules: [{ required: true, message: '请输入合适的类型', whitespace: true,min:2 }],
+                                    {getFieldDecorator('name', {
+                                      rules: [{ required: true, message: '请输入' }],
                                     })(
-                                        <Input {...getFieldProps('userName')}/>
+                                        <Input />
 
-                                    )}
+                                        )}
 
                                 </FormItem>
 
-                            }
-
-                            {
-                                this.state.current === steps.length -2
-                                &&
+                        
                                 <FormItem
-                                          {...formItemLayout}
-                                          label="所属部门"
+                                    {...formItemLayout}
+                                    label="所属部门"
                                 >
-                                    {getFieldDecorator('residence', {
-                                        initialValue: ['zhejiang', 'hangzhou', 'xihu'],
-                                        rules: [{ type: 'array', required: true, message: '请填写所属部门' }],
+                                    {getFieldDecorator('org', {
+                                        rules: [{ type: 'array', required: true, message: '请选择所属部门' }],
                                     })(
-                                        <Cascader options={residences}/>
-                                    )}
+                                        <Cascader options={orgData} />
+                                        )}
                                 </FormItem>
 
-                            }
-                            {
-                                this.state.current === steps.length -1
-                                &&
+
                                 <FormItem
-                                          {...formItemLayout}
-                                          label="日期"
+                                    {...formItemLayout}
+                                    label="设备类型"
                                 >
-                                    {getFieldDecorator('date-picker', config)(
-                                        <DatePicker style={{marginLeft:"-45%"}}/>
-                                    )}
+                                    {getFieldDecorator('type', {
+                                        rules: [{ required: true, message: '请选择设备类型' }],
+                                    })(
+                                        <Cascader options={typeData} />
+                                        )}
                                 </FormItem>
 
-                            }
                         </Form>
-                    </div>
+                
                 </Modal>
             </div>
         );
@@ -281,40 +252,13 @@ class RegistrationForm extends React.Component {
 }
 
 
-class TopHeader extends React.Component{
-    render(){
-        return (
-            <div>
-                <Breadcrumb style={{ margin: '12px 0' }}>
-                    <Breadcrumb.Item>设备管理</Breadcrumb.Item>
-                    <Breadcrumb.Item>创建设备</Breadcrumb.Item>
-                </Breadcrumb>
-            </div>
-        )
-    }
-}
 const WrappedRegistrationForm = Form.create()(RegistrationForm);
-export default class WatchManage extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            list: [],
-            operate_modal_visible: false,
-        }
-    }
-    render(){
-        return(
-            <div>
-                <TopHeader/>
-                <Layout style={{padding:'24px 0', background: '#fff' }}>
-                    <Sider width={200} style={{ background: '#fff' }}>
-                        <Nav/>
-                    </Sider>
-                    <Content style={{padding:'0 24px', minHeight: 280 }}>
-                        <WrappedRegistrationForm />
-                    </Content>
-                </Layout>
-            </div>
+class CreateDevice extends React.Component {
+    render() {
+        return (
+            <WrappedRegistrationForm addDevice={this.props.addDevice} />
         )
     }
 }
+
+export default CreateDevice

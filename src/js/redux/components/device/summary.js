@@ -31,7 +31,7 @@ class Summary extends React.Component {
           
             <Col span={8}>
               <div className="gutter-box" style={{ height: 80, backgroundColor: '#98d87d', color: "#fff", borderRadius: 5 }}  >
-                <div style={{ padding: '20px' }}><Icon type="check-circle" /> 正常设备：<a href="/dm/device"> 666</a></div>
+                <div style={{ padding: '20px' }}><Icon type="check-circle" /> 活跃设备：<a href="/dm/device"> 666</a></div>
               </div>
             </Col>
 
