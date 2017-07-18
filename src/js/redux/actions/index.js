@@ -21,5 +21,9 @@ export function handleProductEvent(params){
 }
 
 export function getDeviceList(){
-  return post(url, 'mqtt_get_devices_for_org', { companyId: config.default_company_id });
+  return post(url, 'app_dm_get_device_on_line', { page_id: 1, page_size:1 } );
+}
+
+export function getDeviceKinds(){
+  return post('http://192.168.0.107:8080/', 'app_dm_get_device_kinds', {});
 }

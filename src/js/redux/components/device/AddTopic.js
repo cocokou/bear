@@ -40,7 +40,7 @@ class RegistrationForm extends Component {
             if (!err) {
 
                 let  comment = {
-                    id: values.type,
+                    key: values.type,
                     type: values.type,
                     topic: values.topic,
                     username: values.username,
