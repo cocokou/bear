@@ -1,15 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router';
-import { Input, Select, Button, Layout, Table, Icon, Breadcrumb, TreeSelect, Dropdown, Row, Col, Popconfirm, Cascader, InputNumber, Tree, Card, Form, Modal } from 'antd';
+import { Input, Select, Button, Layout, Table, Icon, Breadcrumb, TreeSelect, Dropdown, Row, Col, Popconfirm, Cascader, InputNumber,Tree } from 'antd';
 import Nav from '../common/pc_nav';
 import * as config from 'config/app.config.js';
 import EditableCell from './edit'
-import { getOrgList } from 'actions/index';
+/*import { getDeviceList, getDevicekinds,getDeviceList } from 'actions/index';*/
+import Summary from './summary'
 
-const TreeNode = Tree.TreeNode;
 const { Content, Sider } = Layout;
 const Search = Input.Search;
 const treeData = [];
+const TreeNode = Tree.TreeNode;
+var orgText='';
 const statusData = [{
   label: "全选",
   value: '',
@@ -45,61 +47,61 @@ const typeData = [{
   key: '0-0-7',
 }];
 
-const orgData = [{
-  label: '深圳',
-  value: '深圳',
+const  orgData = [{
+  label: '',
+  value: '深圳',disabled:true,
   key: '0-0',
   children: [{
-    label: '科技园',
-    value: '科技园',
+    label: '',
+    value: '科技园',disabled:true,
     key: '0-0-1',
     children: [{
-      label: '研发部',
-      value: '研发部',
+      label: '',
+      value: '研发部',disabled:true,
       key: '0-0-0-1',
     }, {
-      label: '生产部',
-      value: '生产部',
+      label: '',
+      value: '生产部',disabled:true,
       key: '0-0-0-2',
     }, {
-      label: '销售部',
-      value: '销售部',
+      label: '',
+      value: '销售部',disabled:true,
       key: '0-0-0-3',
     }]
   }, {
-    label: '海岸城',
-    value: '海岸城',
+    label: '',
+    value: '海岸城',disabled:true,
     key: '0-0-2',
   }]
 }, {
-  label: '北京',
-  value: '北京',
+  label: '',
+  value: '北京',disabled:true,
   key: '0-1',
   children: [{
-    label: '科技园',
-    value: '科技园',
+    label: '',
+    value: '科技园',disabled:true,
     key: '0-2-2',
     children: [{
-      label: '研发部',
-      value: '研发部',
+      label: '',
+      value: '研发部',disabled:true,
       key: '0-2-2-1',
     }, {
-      label: '生产部',
-      value: '生产部',
+      label: '',
+      value: '生产部',disabled:true,
       key: '0-2-2-2',
     }, {
-      label: '销售部',
-      value: '销售部',
+      label: '',
+      value: '销售部',disabled:true,
       key: '0-2-2-3',
     }]
   }, {
-    label: 'A部门',
-    value: 'A部门',
+    label: '',
+    value: 'A部门',disabled:true,
     key: '0-1-1',
   },
   {
-    label: 'B部门',
-    value: 'B部门',
+    label: '',
+    value: 'B部门',disabled:true,
     key: '0-2-3',
   }]
 }];
@@ -214,82 +216,20 @@ const deviceData = [{
   location: '* * *',
 },];
 
-
 /*const Option = Select.Option;*/
-let normal = 0, unNormal = 0, unKnow = 0;
-
+/*var normal=0,unNormal=0,unKnow=0;*/
 class TopHeader extends React.Component {
   render() {
     return (
       <div>
         <Breadcrumb style={{ margin: '12px 0' }}>
-          <Breadcrumb.Item><Link to="/dm/device"><Icon type="arrow-left" />设备管理</Link></Breadcrumb.Item>
-          <Breadcrumb.Item><Link to="/dm/org2">查看</Link></Breadcrumb.Item>
+          <Breadcrumb.Item>设备管理</Breadcrumb.Item>
+          <Breadcrumb.Item>查看设备</Breadcrumb.Item>
         </Breadcrumb>
       </div>
     )
   }
 }
-
-
-class OrgTree extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      expandedKeys: ['0-0-0', '0-0-1'],
-      autoExpandParent: true,
-      checkedKeys: ['0-0-0'],
-      selectedKeys: [],
-    }
-  }
-  onExpand(expandedKeys) {
-    console.log('onExpand', arguments);
-    this.setState({
-      expandedKeys,
-      autoExpandParent: false,
-    });
-  }
-  onCheck(checkedKeys) {
-    this.setState({
-      checkedKeys,
-      selectedKeys: ['0-3', '0-4'],
-    });
-  }
-  onSelect(selectedKeys, info) {
-    console.log('onSelect', info);
-    this.setState({ selectedKeys });
-  }
-  render() {
-    const loop = data => data.map((item) => {
-      if (item.children) {
-        return (
-          <TreeNode key={item.key} title={item.value} disableCheckbox={item.key === '0-0-0'}>
-            {loop(item.children)}
-          </TreeNode>
-        );
-      }
-      return <TreeNode key={item.key} title={item.value} />;
-    });
-    return (
-      <div style={{ borderRight: "1px dotted #ddd" }}>
-        <h3>我的部门</h3>
-        <Tree
-          checkable
-          onExpand={this.onExpand.bind(this)}
-          expandedKeys={this.state.expandedKeys}
-          autoExpandParent={this.state.autoExpandParent}
-          onCheck={this.onCheck.bind(this)}
-          checkedKeys={this.state.checkedKeys}
-          onSelect={this.onSelect.bind(this)}
-          selectedKeys={this.state.selectedKeys}
-        >
-          {loop(orgData)}
-        </Tree>
-      </div>
-    );
-  }
-}
-
 class FilterHeader extends React.Component {
   constructor(props) {
     super(props);
@@ -302,7 +242,6 @@ class FilterHeader extends React.Component {
       valueOrg: '',
     }
   }
-
   //搜索
   onInputChange(e) {
     this.setState({ searchText: e.target.value });
@@ -318,21 +257,27 @@ class FilterHeader extends React.Component {
   onChangeFirst(valueFirst) {
     this.setState({ value1: valueFirst });
   }
+
   onChangeTwo(valueTwo) {
     this.setState({ value2: valueTwo });
   }
+
   onChangeOrg(valueOrg) {
-    const valueOrgs = valueOrg.join("");
+    let valueOrgs = valueOrg.join("");
+    console.log(valueOrgs.length);
+    console.log(orgText.length);
+    valueOrgs=orgText.length>valueOrgs.length?orgText:valueOrgs;
     this.setState({ valueOrg: valueOrgs });
   }
 
   onSelect() {
     const { value1, value2, valueOrg } = this.state;
-    console.log(valueOrg);
     this.props.searchBySelect(value1, value2, valueOrg);
   }
+  onChangeValue(){
 
 
+}
   render() {
     return (
       <div className="panel search">
@@ -347,7 +292,7 @@ class FilterHeader extends React.Component {
         </div>
         <div style={{ lineHeight: 3 }}>
 
-          <label style={{ width: 70 }}>设备状态：&nbsp;</label>
+          <label style={{ width: 70 }}>设备状态：&nbsp; </label>
           <TreeSelect
             style={{ width: 200 }}
             dropdownStyle={{ maxHeight: 400, overflow: 'auto' }}
@@ -356,13 +301,14 @@ class FilterHeader extends React.Component {
             treeDefaultExpandAll
             class='space-right'
             onChange={this.onChangeFirst.bind(this)}
-            value={this.state.value1 ? this.state.value1 : this.props.selFirst}
+            value={this.state.value1?this.state.value1:this.props.selFirst}
+          /*  value={this.onChangeValue.bind(this)}*/
           />
           <label style={{ marginLeft: 60 }}>所属部门：&nbsp; </label>
 
-          <Cascader options={orgData} onChange={this.onChangeOrg.bind(this)} changeOnSelect />
-        </div>
+          <Cascader options={orgData} onChange={this.onChangeOrg.bind(this)} changeOnSelect/>
 
+        </div>
         <div style={{ lineHeight: 3 }}>
           <label>设备位置：&nbsp; </label>
           <TreeSelect
@@ -402,21 +348,21 @@ class ListDevices extends React.Component {
       selectedRows: [],
       record: '',
       queryInfo: {
-        pageSize: 10
+      pageSize: 10
       },
       filteredInfo: null,
       sortedInfo: null,
       pagination: {
         current: 1
       },
-      selFirst: '',
-      visible: false
+      selFirst:'',
+      normal:0,
+      unNormal:0,
+      unKnow:0,
     };
 
     this.onDelete = this.onDelete.bind(this);
     this.handleSelectedDelete = this.handleSelectedDelete.bind(this);
-
-
     this.columns = [{
       title: '编号',
       dataIndex: 'id',
@@ -457,33 +403,20 @@ class ListDevices extends React.Component {
         let { pagination, queryInfo } = this.state;
         let Index = index;
         if (pagination.current > 1) {
-          Index = index + queryInfo.pageSize * (pagination.current - 1)
+          Index = index + queryInfo.pageSize*(pagination.current-1)
         }
         const { editable } = this.state.dataSource[Index].name;
         return (
           <div>
             <span>
-              <a onClick={this.showModal.bind(this)}>查看</a>
-
-              <Modal
-                title="查看"
-                visible={this.state.visible}
-                onOk={() => this.showModal(false)}
-                onCancel={() => this.showModal(false)}
-              >
-                <p>some contents...</p>
-
-                
-                
-              </Modal>
-
+              <a href="#">查看</a>
             </span>
             <span className="ant-divider" />
             {
               editable ?
                 <span>
                   <a onClick={this.editDone.bind(this, Index, 'save')}>保存 </a>
-                  <Popconfirm title="Sure to cancel?" onConfirm={this.editDone.bind(this, Index, 'cancel')}>
+                                      <Popconfirm title="Sure to cancel?" onConfirm={this.editDone.bind(this, Index, 'cancel')}>
                     <a> 取消</a>
                   </Popconfirm>
 
@@ -504,17 +437,63 @@ class ListDevices extends React.Component {
       }
     }];
   }
+    componentWillMount(){
+        let {normal,unNormal,unKnow,dataSource}=this.state;
+        dataSource.map(function(record){
+            let status=record.status;
+            if(status==="正常"){
+                normal+=1;
+            }
+            if(status==="不正常"){
+                unNormal+=1;
+            }
+            if(status==="未登记"){
+                unKnow+=1;
+            }
+        });
+        this.setState({normal,unNormal,unKnow});
+/*        orgText="深圳科技园生产部";
+        let orgNumber=0;
+        orgData.map(function(record,index){
+            let OrgCheck=new RegExp(record.value);
+            if(orgText.match(OrgCheck)){ //深圳
+                orgData[index].disabled=false;
+                orgData[index].label=orgData[index].value;
+                orgNumber+=record.value.length;
+                if(record.children){
+                    record.children.map(function(recordO,index){
+                        let OrgCheck=new RegExp(recordO.value);
+                        if(orgText.match(OrgCheck)){  //科技园
+                            record.children[index].disabled=false;
+                            record.children[index].label=record.children[index].value;
+                            orgNumber+=recordO.value.length;
+                            if(recordO.children){
+                                recordO.children.map(function(recordT,index){
+                                    let OrgCheck=new RegExp(recordT.value);
+                                    if(orgText.match(OrgCheck)){  //具体部门
+                                        recordO.children[index].disabled=false;
+                                        recordO.children[index].label=recordO.children[index].value;
+                                    }
+                                    if(orgText.length===orgNumber){
+                                        recordO.children[index].disabled=false;
+                                        recordO.children[index].label=recordO.children[index].value;
+                                    }
+                                })
+                            }
+                        }
+                    })
+                }
+            }
+        })*/
 
-  showModal(b) {
-    this.setState({ visible: b })
-  }
+    }
 
   renderColumns(data, index, key, text) {
     let { pagination, queryInfo } = this.state;
 
     let Index = index;
     if (pagination.current > 1) {
-      Index = index + queryInfo.pageSize * (pagination.current - 1)
+       Index = index + queryInfo.pageSize*(pagination.current-1)
     }
     const { editable, value, statuss } = data[Index][key];
     if (typeof editable === 'undefined') {
@@ -532,7 +511,7 @@ class ListDevices extends React.Component {
     let { pagination, queryInfo } = this.state;
     let Index = index;
     if (pagination.current > 1) {
-      Index = index + queryInfo.pageSize * (pagination.current - 1)
+       Index = index + queryInfo.pageSize*(pagination.current-1)
     }
     let dataSource = this.state.dataSource;
     dataSource[Index][key].value = value;
@@ -564,33 +543,52 @@ class ListDevices extends React.Component {
       });
     });
   }
-  onDelete(index) {
-    /*        let { pagination, queryInfo } = this.state;
-            let Index = index;
-            if (pagination.current > 1) {
-                Index = index + queryInfo.pageSize*(pagination.current-1)
-            }*/
-    let { pagination, queryInfo } = this.state;
-    const dataSource = [...this.state.dataSource];
-    dataSource.splice(index, 1);//index为获取的索引，后面的 1 是删除几行
-    if (index % queryInfo.pageSize === 0) {
-      pagination.current -= 1
-    }
-    this.setState({ dataSource });
-  }
+    onDelete(index) {
+/*        let { pagination, queryInfo } = this.state;
+        let Index = index;
+        if (pagination.current > 1) {
+            Index = index + queryInfo.pageSize*(pagination.current-1)
+        }*/
+        let { pagination, queryInfo } = this.state;
+        const dataSource = [...this.state.dataSource];
+        dataSource.splice(index, 1);//index为获取的索引，后面的 1 是删除几行
+        if(index%queryInfo.pageSize===0 ){
+            pagination.current-=1
+        }
+        this.setState({ dataSource });
 
-  handleSelectedDelete() {
-    if (this.state.selectedRowKeys.length > 0) {
-      const dataSource = [...this.state.dataSource]
-      dataSource.splice(this.state.selectedRows, this.state.selectedRows.length)
-      this.setState({ dataSource });
+        let normal=0,unNormal=0,unKnow=0;
+        dataSource.map(function(record){
+            let status=record.status;
+            console.log(status);
+            if(status==="正常"){
+                normal+=1;
+            }
+            if(status==="不正常"){
+                unNormal+=1;
+            }
+            if(status==="未登记"){
+                unKnow+=1;
+            }
+        });
+        this.setState({normal:normal,unNormal:unNormal,unKnow:unKnow});
     }
-    else {
-    }
-  }
 
-  onSearch(searchText) {
-    let reg = new RegExp(searchText, 'gi');
+    handleSelectedDelete() {
+        if (this.state.selectedRowKeys.length > 0) {
+            const dataSource = [...this.state.dataSource];
+            dataSource.splice(this.state.selectedRows, this.state.selectedRows.length);
+            this.setState({ dataSource });
+        }
+        else {
+
+        }
+
+    }
+
+  onSearch(searchText,e) {
+      e.preventDefault();  //阻止默认跳动行为
+      let reg = new RegExp(searchText, 'gi');
     this.setState({
       dataSource: deviceData.map(function (record) {
         let type = record.type.match(reg);
@@ -612,23 +610,21 @@ class ListDevices extends React.Component {
       }).filter(record => !!record),
     });
   }
-  showAll() {
-    this.setState({ dataSource: deviceData })
-  }
 
   searchBySelect(selectFirst, selectTwo, selectOrg) {
     let regFirst = new RegExp('^' + selectFirst);
     let regTwo = new RegExp(selectTwo);
     let regThree = new RegExp(selectOrg);
     this.setState({
-      selFirst: selectFirst,
+        selFirst:selectFirst,
       dataSource: deviceData.map(function (record) {
         let Status = record.status.match(regFirst);
         let type = record.type.match(regTwo);
         let Org = record.org.match(regThree);
-        if (!type || !Status || !Org) {
+        if (!type|| !Status || !Org) {
           return null;
-        } if (type) {
+        }
+        if (type) {
           return {
             status: record.status,
             org: record.org,
@@ -667,23 +663,22 @@ class ListDevices extends React.Component {
 
     });
   }
-
-  //点击分页数
-  handChange(pagination, filters, sorter) {
-    const dataSource = this.state.dataSource;
-    console.log('Various parameters', pagination, filters, sorter);
-    this.setState({
-      filteredInfo: filters,
-      sortedInfo: sorter,
-      pagination: pagination,
-      dataSource: dataSource
-    });
-  };
-  //选择每页显示数量
-  onSelChange(value) {
-    this.setState({ queryInfo: { pageSize: value } });
-    console.log(value)
-  }
+      //点击分页数
+    handChange (pagination, filters, sorter){
+        const dataSource = this.state.dataSource;
+        console.log('Various parameters', pagination, filters, sorter);
+        this.setState({
+            filteredInfo: filters,
+            sortedInfo: sorter,
+            pagination:pagination,
+            dataSource:dataSource
+        });
+    };
+    //选择每页显示数量
+    onSelChange(value){
+        this.setState({queryInfo:{pageSize:value}});
+        console.log(value)
+    }
 
 
   render() {
@@ -699,56 +694,49 @@ class ListDevices extends React.Component {
 
       <div>
 
-        <Row gutter={20}>
-          <Col span={4} style={{ minWidth: 200 }}>        <OrgTree />      </Col>
 
-          <Col span={20} >
+{        // <Row gutter={32} style={{ maxWidth: 1500, minWidth: 800, fontSize: 22, margin: 20 }}>
 
-            {            //  <Summary searchBySelect={this.searchBySelect.bind(this)} normal={normal} unNormal={unNormal} unKnow={unKnow} />
-            }
-            <FilterHeader dataForm={this.state.dataSource}
-              selFirst={this.state.selFirst}
-              onSearch={this.onSearch.bind(this)}
-              searchBySelect={this.searchBySelect.bind(this)}
-            />
 
-            <Row gutter={5} style={{ marginTop: 30 }}>
-              <Col span={5} style={{ minWidth: 210 }}>每页显示数量：
-            <InputNumber min={5} defaultValue={this.state.queryInfo.pageSize}
-                  onChange={this.onSelChange.bind(this)} />
-              </Col>
-              {this.state.dataSource.length < deviceData.length &&
-                <Col span={10} > 显示 <a > {this.state.dataSource.length} </a>条搜索结果
-            <a href="" onClick={this.showAll.bind(this)}> 查看全部</a>
-                </Col>}
-            </Row>
-            <Table columns={this.columns}
-              dataSource={this.state.dataSource}
-              rowSelection={rowSelection} rowKey='id'
-              onChange={this.handChange.bind(this)}
-              pagination={{ pageSize: this.state.queryInfo.pageSize }}
-            />
+        //   <Col span={2}>
+        //     { // <Popconfirm title="设备删除后不能恢复，确定要删除所选设备吗？"
+        //       // onConfirm={this.handleSelectedDelete} 
+        //       // okText="删除" cancelText="取消">
+        //       //   <Button type="primary" >删除</Button>
+        //       // </Popconfirm>
+        //     }
+        //     <Button >删除</Button>
+        //   </Col>
+        //   <Col span={2}>
+        //     <Button >暂停</Button>
+        //   </Col>
+        //   <Col span={2}>
+        //     <Button>重启</Button>
+        //   </Col>
+        // </Row>
+}        <Summary searchBySelect={this.searchBySelect.bind(this)} normal={this.state.normal} unNormal={this.state.unNormal} unKnow={this.state.unKnow}/>
 
-          </Col>
-        </Row>
+        <FilterHeader dataForm={this.state.dataSource}
+                      selFirst={this.state.selFirst}
+          onSearch={this.onSearch.bind(this)}
+          searchBySelect={this.searchBySelect.bind(this)} />
+
+        <div style={{ margin: 20 }}>每页显示数量：
+        <InputNumber min={5} defaultValue={this.state.queryInfo.pageSize}
+            onChange={this.onSelChange.bind(this)} />
+        </div>
+        <Table columns={this.columns}
+          dataSource={this.state.dataSource}
+          rowSelection={rowSelection} rowKey='id'
+          onChange={this.handChange.bind(this)}
+          pagination={{ pageSize: this.state.queryInfo.pageSize }}
+        />
+
       </div>
     );
   }
-  // for summary
-  // componentWillMount() {
-  //   deviceData.map(function (record) {
-  //     let status = record.status;
-  //     if (status === "正常") {
-  //       normal += 1;
-  //     }
-  //     if (status === "不正常") {
-  //       unNormal += 1;
-  //     }
-  //     if (status === "未登记") {
-  //       unKnow += 1;
-  //     }
-  //   })
-  // }
+
+
 
 }
 
@@ -767,7 +755,9 @@ export default class ManageDevice extends React.Component {
       <div>
         <TopHeader />
         <Layout style={{ padding: '24px 0', background: '#fff' }}>
-
+          <Sider width={200} style={{ background: '#fff' }}>
+            <Nav />
+          </Sider>
           <Content style={{ padding: '0 24px', minHeight: 280 }}>
 
             <ListDevices />
@@ -779,45 +769,3 @@ export default class ManageDevice extends React.Component {
   }
 
 }
-
-
-// class Summary extends React.Component {
-//     onClickFrist(){
-//         this.props.searchBySelect("正常")
-//     }
-//     onClickTwo(){
-//         this.props.searchBySelect("不正常")
-//     }
-//     onClickThree(){
-//         this.props.searchBySelect("未登记")
-//     }
-//   render() {
-//     return (
-//       <div style={{ width: '100%', padding: '30px'}}>
-//           <Card title="Summary" style={{ width: '100%', minHeight: 240, marginBottom:20}}>
-//           <Row gutter={32} style={{ maxWidth: 1500, fontSize: 22, marginTop: 20 }}>
-
-//             <Col span={8}>
-//               <div className="gutter-box" style={{ height: 80, backgroundColor: '#98d87d', color: "#fff", borderRadius: 5 }}  >
-//                 <div style={{ padding: '20px' }} onClick={this.onClickFrist.bind(this)}><a style={{ color: "#fff" }}><Icon type="check-circle" /> 活跃设备： {this.props.normal}</a></div>
-//               </div>
-//             </Col>
-
-//             <Col span={8}>
-//               <div className="gutter-box" style={{ height: 80, backgroundColor: '#f27b71', color: "#fff", borderRadius: 5 }}  >
-
-//                 <div style={{ padding: '20px' }} onClick={this.onClickTwo.bind(this)}><a style={{ color: "#fff" }}><Icon type="close-circle" /> 异常设备： {this.props.unNormal}</a></div>
-//               </div>
-//             </Col>
-
-//             <Col className="gutter-row" span={8}>
-//               <div className="gutter-box" style={{ height: 80, backgroundColor: '#49a9ee', color: "#fff", borderRadius: 5 }}  >
-//                 <div style={{ padding: '20px' }} onClick={this.onClickThree.bind(this)}> <a style={{ color: "#fff" }}><Icon type="info-circle" /> 未配置设备：{this.props.unKnow}</a></div>
-//               </div>
-//             </Col>
-//           </Row>
-//         </Card>
-//       </div>
-//     )
-//   }
-// }

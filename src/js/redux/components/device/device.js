@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router';
-import { Input, Select, Button, Layout, Table, Icon, Breadcrumb, TreeSelect, Dropdown, Row, Col, Popconfirm, Cascader, InputNumber } from 'antd';
+import { Input, Select, Button, Layout, Table, Icon, Breadcrumb, TreeSelect, Dropdown, Row, Col, Popconfirm, Cascader, InputNumber, Card } from 'antd';
 import Nav from '../common/pc_nav';
 import * as config from 'config/app.config.js';
 import EditableCell from './edit'
@@ -175,43 +175,7 @@ const deviceData = [{
   last_update_time: '2017-01-01 12:00',
   org: '北京科技园生产部',
   location: '* * *',
-}, {
-  id: '9',
-  key: '9',
-  name: { editable: false, value: 'F5809' },
-  type: '固定式',
-  status: '不正常',
-  last_update_time: '2017-01-01 12:00',
-  org: '北京科技园销售部',
-  location: '* * *',
-}, {
-  id: '10',
-  key: '10',
-  name: { editable: false, value: 'F5810' },
-  type: '固定式',
-  status: '不正常',
-  last_update_time: '2017-01-01 12:00',
-  org: '北京A部门',
-  location: '* * *',
-}, {
-  id: '11',
-  key: '11',
-  name: { editable: false, value: 'F5811' },
-  type: '固定式',
-  status: '正常',
-  last_update_time: '2017-01-01 12:00',
-  org: '北京A部门',
-  location: '* * *',
-}, {
-  id: '12',
-  key: '12',
-  name: { editable: false, value: 'F5812' },
-  type: '固定式',
-  status: '未登记',
-  last_update_time: '2017-01-01 12:00',
-  org: '深圳科技园研发部',
-  location: '* * *',
-},];
+}];
 
 
 const Option = Select.Option;
@@ -227,6 +191,41 @@ class TopHeader extends React.Component {
     )
   }
 }
+
+class Summary extends React.Component {
+  render() {
+    return (
+      <div style={{ width: '100%'}}>
+          <Card title="Summary" style={{ width: '100%', minHeight: 240, marginBottom:20}}>
+          <Row gutter={32} style={{ maxWidth: 1500, fontSize: 22, marginTop: 20 }}>
+          
+            <Col span={8}>
+              <div className="gutter-box" style={{ height: 80, backgroundColor: '#98d87d', color: "#fff", borderRadius: 5 }}  >
+                <div style={{ padding: '20px' }}><Icon type="check-circle" /> 活跃设备：<a href="/dm/device"> 666</a></div>
+              </div>
+            </Col>
+
+            <Col span={8}>
+              <div className="gutter-box" style={{ height: 80, backgroundColor: '#f27b71', color: "#fff", borderRadius: 5 }}  >
+
+                <div style={{ padding: '20px' }}><Icon type="close-circle" /> 异常设备： <a href="/dm/device">22</a></div>
+              </div>
+            </Col>
+
+            <Col className="gutter-row" span={8}>
+              <div className="gutter-box" style={{ height: 80, backgroundColor: '#49a9ee', color: "#fff", borderRadius: 5 }}  >
+                <div style={{ padding: '20px' }}> <Icon type="info-circle" /> 未配置设备：<a style={{ color: "#fff" }} href="/dm/device">12</a></div>
+              </div>
+            </Col>
+          </Row>
+        </Card>
+
+      </div>
+    )
+  }
+}
+
+
 
 class FilterHeader extends React.Component {
   constructor(props) {
@@ -333,7 +332,8 @@ class ListDevices extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataSource: deviceData,
+      // dataSource: deviceData,
+      dataSource: [],
       figureSource: deviceData,
       index: '',
       selectedRowKeys: [],
@@ -341,7 +341,7 @@ class ListDevices extends React.Component {
       record: '',
       figure: 0,
       number: 0,
-      
+
       queryInfo: {
         pageSize: 10
       },
@@ -360,41 +360,45 @@ class ListDevices extends React.Component {
       key: 'id',
       render: id => <a href="#">{id}</a>,
     }, {
-      title: '设备名称',
+      title: '设备ID',
       dataIndex: 'name',
       key: 'name',
       render: (text, record, index) => this.renderColumns(this.state.dataSource, index, 'name', text),
-    }, {
-      title: '设备状态',
-      dataIndex: 'status',
-      key: 'status',
+    }, 
+    // {
+    //   title: '设备状态',
+    //   dataIndex: 'status',
+    //   key: 'status',
 
-      onFilter: null,
-    }, {
-      title: '所属部门',
-      dataIndex: 'org',
-      key: 'org'
-    }, {
-      title: '设备类型',
-      dataIndex: 'type',
-      key: 'type',
+    //   onFilter: null,
+    // }, {
+    //   title: '所属部门',
+    //   dataIndex: 'org',
+    //   key: 'org'
+    // }, {
+    //   title: '设备类型',
+    //   dataIndex: 'type',
+    //   key: 'type',
 
-    }, {
+    // }, 
+    {
       title: '状态更新时间',
       dataIndex: 'last_update_time',
       key: 'last_update_time'
-    }, {
-      title: '设备位置',
-      dataIndex: 'location',
-      key: 'location'
-    }, {
+    }, 
+    // {
+    //   title: '设备位置',
+    //   dataIndex: 'location',
+    //   key: 'location'
+    // },
+     {
       title: '操作',
       key: 'action',
       render: (text, record, index) => {
         let { pagination, queryInfo } = this.state;
         let Index = index;
         if (pagination.current > 1) {
-          Index = index + queryInfo.pageSize*(pagination.current-1)
+          Index = index + queryInfo.pageSize * (pagination.current - 1)
         }
         const { editable } = this.state.dataSource[Index].name;
         return (
@@ -407,7 +411,7 @@ class ListDevices extends React.Component {
               editable ?
                 <span>
                   <a onClick={this.editDone.bind(this, Index, 'save')}>保存 </a>
-                                      <Popconfirm title="Sure to cancel?" onConfirm={this.editDone.bind(this, Index, 'cancel')}>
+                  <Popconfirm title="Sure to cancel?" onConfirm={this.editDone.bind(this, Index, 'cancel')}>
                     <a> 取消</a>
                   </Popconfirm>
 
@@ -437,7 +441,7 @@ class ListDevices extends React.Component {
 
     let Index = index;
     if (pagination.current > 1) {
-       Index = index + queryInfo.pageSize*(pagination.current-1)
+      Index = index + queryInfo.pageSize * (pagination.current - 1)
     }
 
     const { editable, value, statuss } = data[Index][key];
@@ -457,7 +461,7 @@ class ListDevices extends React.Component {
     let { pagination, queryInfo } = this.state;
     let Index = index;
     if (pagination.current > 1) {
-       Index = index + queryInfo.pageSize*(pagination.current-1)
+      Index = index + queryInfo.pageSize * (pagination.current - 1)
     }
     let dataSource = this.state.dataSource;
     dataSource[Index][key].value = value;
@@ -503,7 +507,6 @@ class ListDevices extends React.Component {
         let Name = record.name.match(reg);
         let Status = record.status.match(reg);
         if (!type && !org && !Name && !Status) {
-
           return null;
         }
         return {
@@ -533,40 +536,25 @@ class ListDevices extends React.Component {
         let Org = record.org.match(regThree);
         // console.log(record.org);
         // console.log(Org);
+        let device = {
+          status: record.status,
+          org: record.org,
+          name: record.name,
+          location: record.location,
+          last_update_time: record.last_update_time,
+          id: record.id,
+          type: record.type,
+        };
         if (!type || !Status || !Org) {
           return null;
         } if (type) {
-          return {
-            status: record.status,
-            org: record.org,
-            name: record.name,
-            location: record.location,
-            last_update_time: record.last_update_time,
-            id: record.id,
-            type: record.type,
-          }
+          return device
         }
         if (Status) {
-          return {
-            status: record.status,
-            org: record.org,
-            name: record.name,
-            location: record.location,
-            last_update_time: record.last_update_time,
-            id: record.id,
-            type: record.type,
-          }
+          return device
         }
         if (Org) {
-          return {
-            status: record.status,
-            org: record.org,
-            name: record.name,
-            location: record.location,
-            last_update_time: record.last_update_time,
-            id: record.id,
-            type: record.type,
-          }
+          return device
         }
       }).filter(record => !!record),
 
@@ -591,24 +579,47 @@ class ListDevices extends React.Component {
     }
   }
 
-      //点击分页数
-    handChange (pagination, filters, sorter){
-        const dataSource = this.state.dataSource;
-        console.log('Various parameters', pagination, filters, sorter);
+  //点击分页数
+  handChange(pagination, filters, sorter) {
+    const dataSource = this.state.dataSource;
+    console.log('Various parameters', pagination, filters, sorter);
 
-        this.setState({
-            filteredInfo: filters,
-            sortedInfo: sorter,
-            pagination:pagination,
-            dataSource:dataSource
-        });
-    };
-    //选择每页显示数量
-    onSelChange(value){
-        this.setState({queryInfo:{pageSize:value}});
-        console.log(value)
-    }
+    this.setState({
+      filteredInfo: filters,
+      sortedInfo: sorter,
+      pagination: pagination,
+      dataSource: dataSource
+    });
+  };
+  //选择每页显示数量
+  onSelChange(value) {
+    this.setState({ queryInfo: { pageSize: value } });
+    console.log(value)
+  }
 
+
+  componentDidMount(){
+    getDeviceList()
+      .done((data) => {
+        console.log(data)
+        data.map((d) => {
+        let device = {};
+          device = {
+            id: d.rowno,
+            key: d.device_id,
+            name: d.device_id,
+            last_update_time: d.login_time,
+          };
+          const dataSource = [...this.state.dataSource];
+          dataSource.push(device);
+          this.setState({ dataSource })
+        })
+      })
+    .fail( msg => {
+      message(msg || '网络异常，请稍后再试')
+    })
+  }
+  
 
   render() {
     const rowSelection = {
@@ -621,30 +632,29 @@ class ListDevices extends React.Component {
     };
     return (
       <div>
+
         <FilterHeader dataForm={this.state.dataSource}
           onSearch={this.onSearch.bind(this)}
           searchBySelect={this.searchBySelect.bind(this)} />
-
-        <Row gutter={32} style={{ maxWidth: 1500, minWidth: 800, fontSize: 22, margin: 20 }}>
-
-
-          <Col span={2}>
-            {           // <Popconfirm title="设备删除后不能恢复，确定要删除所选设备吗？" 
-              // onConfirm={this.handleSelectedDelete} 
-              // okText="删除" cancelText="取消">
-              //   <Button type="primary" >删除</Button>
-              // </Popconfirm>
-            }
-            <Button >删除</Button>
-          </Col>
-          <Col span={2}>
-            <Button >暂停</Button>
-          </Col>
-          <Col span={2}>
-            <Button>重启</Button>
-          </Col>
-        </Row>
-
+{
+        // <Row gutter={32} style={{ maxWidth: 1500, minWidth: 800, fontSize: 22, margin: 20 }}>
+        //   <Col span={2}>
+        //     {           // <Popconfirm title="设备删除后不能恢复，确定要删除所选设备吗？" 
+        //       // onConfirm={this.handleSelectedDelete} 
+        //       // okText="删除" cancelText="取消">
+        //       //   <Button type="primary" >删除</Button>
+        //       // </Popconfirm>
+        //     }
+        //     <Button >删除</Button>
+        //   </Col>
+        //   <Col span={2}>
+        //     <Button >暂停</Button>
+        //   </Col>
+        //   <Col span={2}>
+        //     <Button>重启</Button>
+        //   </Col>
+        // </Row>
+}
         <div style={{ margin: 20 }}>每页显示数量：
         <InputNumber min={5} defaultValue={this.state.queryInfo.pageSize}
             onChange={this.onSelChange.bind(this)} />
@@ -660,18 +670,11 @@ class ListDevices extends React.Component {
     );
   }
 
-  // componentDidMount(){
-  //   getDeviceList()
-  //   .done((data) => {
-  //     //  this.setState({dataSource: data})
-  //     console.log(data)
-  //   })
-  //   .fail( msg => {
-  //     message(msg || '网络异常，请稍后再试')
-  //   })
-  // }
+
 
 }
+
+
 
 
 export default class ManageDevice extends React.Component {

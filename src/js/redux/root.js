@@ -58,10 +58,11 @@ const getComponents = (routePath, accessControl) => (nexState, replace, callback
     case 'dm':
       require.ensure([], require => {
         components.SummaryPannel = require('./components/device/summary.js').default;
-        components.OrgPannel = require('./components/device/org.js').default;
-        components.testPannel = require('./components/device/test.js').default;
+        components.OrgPannel = require('./components/device/org2.js').default;
+        // components.testPannel = require('./components/device/test.js').default;
+        components.org2Pannel = require('./components/device/org.js').default;
         components.DevicePannel = require('./components/device/device.js').default;
-        components.TopicPannel = require('./components/device/topic.js').default;
+        components.Device2Pannel = require('./components/device/device2.js').default;
         callback();
       })
       break;
@@ -141,10 +142,10 @@ const Root = () => (
   <div>
     <MediaQuery query='(min-device-width: 1224px)'>
       <Router history={history}>
-        <Route path="/" component={Entry}>    
+        <Route path="/" component={Entry}>
           <Route path="pm" onEnter={getComponents('pm')}>
             <Route path="product"  >
-              <IndexRoute getComponent={get('ProductPannel')}/>
+              <IndexRoute getComponent={get('ProductPannel')} />
               <Route path="add" getComponent={get('ProductFormPannel')} />
             </Route>
             <Route onEnter={onEnter("ProductMapAccess")} path="productmap" getComponents={get('ProductMapPannel')} />
@@ -165,9 +166,10 @@ const Root = () => (
           <Route path="dm" onEnter={getComponents('dm')}>
             <Route path="summary" getComponents={get('SummaryPannel')} />
             <Route path="org" getComponents={get('OrgPannel')} />
-            <Route path="test" getComponents={get('testPannel')} />
-            <Route path="device" getComponents={get('DevicePannel')} />
-            <Route path="topic" getComponents={get('TopicPannel')} />
+            <Route path="org2" getComponents={get('org2Pannel')} />
+{          // <Route path="test" getComponents={get('testPannel')} />
+}           <Route path="device" getComponents={get('DevicePannel')} />
+           <Route path="device2" getComponents={get('Device2Pannel')} />
           </Route>
 
           <Route path="test" onEnter={getComponents('test')}>

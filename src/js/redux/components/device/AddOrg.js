@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import Nav from '../common/pc_nav';
-import { Steps, Form, Input, Tooltip, Layout, Icon, Breadcrumb, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, Modal, DatePicker } from 'antd';
+import { Steps, Form, Input, Tooltip, Layout, Icon, Breadcrumb, Cascader, Select, Row, Col, Checkbox, Button, AutoComplete, Modal } from 'antd';
 
 const FormItem = Form.Item;
 const Option = Select.Option;
@@ -46,23 +46,23 @@ class RegistrationForm extends Component {
             if (!err) {
                 const comment = {
                     id: count,
-                    key: values.orgname.toString(),
-                    device_qty: '0',
-                    org: values.orgname,
-                    created: '2017-01-01 12:00',
+                    key: values.name.toString(),
+                    name: values.name,
+                    parent_id: '',
+                    company_id: '',
                     detail: values.description
                 }
                 this.props.addOrg(comment)
             }
         });
-        this.setState({ current: 0, visible: false, count: count })
+        this.setState({ visible: false, count: count })
         this.props.form.resetFields()
     }
 
 
     render() {
         const { getFieldDecorator } = this.props.form;
-        const { current, visible } = this.state;
+        const { visible } = this.state;
 
         const formItemLayout = {
             labelCol: {
@@ -77,10 +77,10 @@ class RegistrationForm extends Component {
 
         return (
             <div >
-                <Button type="primary" onClick={this.showModal.bind(this)}>创建设备组</Button>
+                <Button type="primary" onClick={this.showModal.bind(this)}>创建部门</Button>
                 <Modal
                     visible={visible}
-                    title="创建设备组"
+                    title="创建部门"
                     onOk={this.handleOk.bind(this)}
                     onCancel={this.handleCancel.bind(this)}
                     footer={[
@@ -95,10 +95,10 @@ class RegistrationForm extends Component {
 
                         <FormItem
                             {...formItemLayout}
-                            label="设备路径 "
+                            label="部门 "
                             hasFeedback
                         >
-                            {getFieldDecorator('orgname', {
+                            {getFieldDecorator('name', {
                                 rules: [{ required: true, message: '请输入设备路径', whitespace: true }],
                             })(
                                 <Input />
