@@ -11,10 +11,16 @@ export default [{
     "key": 'DeviceViewAccess',
     "name": "设备列表",
     "link": '/dm/device'
-  },{
+  },
+  {
     "key": 'DeviceOrg',
     "name": "部门列表",
     "link": '/dm/org'
+  },
+  {
+    "key": 'DevicePoint',
+    "name": "位置管理",
+    "link": '/dm/position'
   }]
 },{
   'key': 'product_management',

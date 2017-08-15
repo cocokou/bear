@@ -665,7 +665,7 @@ class ListDevices extends React.Component {
           onChange={this.handChange.bind(this)}
           pagination={{ pageSize: this.state.queryInfo.pageSize }}
         />
-
+         <Button><Link to="/dm/device2">查看模拟</Link></Button>
       </div>
     );
   }

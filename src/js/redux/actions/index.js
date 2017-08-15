@@ -1,4 +1,4 @@
-import { post } from 'utils/request';
+import { post, postt } from 'utils/request';
 import config from 'config/app.config';
 
 const url = config.ajax;
@@ -28,7 +28,7 @@ export function getOrgList(){
   return post('http://119.23.132.97:8001/api', 'admin_get_sub_org', {});
 }
 
-export function getDeviceKinds(){
-  return post(url, 'app_dm_get_device_kinds', { api_user_id: '1' });
+export function getContainer(){
+  return post("http://119.23.132.97:80/api", 'dm_get_container', {"org_id":'1002' });
 }
 

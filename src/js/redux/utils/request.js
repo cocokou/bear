@@ -2,8 +2,8 @@
 import $ from 'jquery';
 import req from 'superagent';
 
-function Promise(async_task){
-  if(typeof async_task == 'function'){
+function Promise(async_task) {
+  if (typeof async_task == 'function') {
     var $d = $.Deferred();
     async_task($d.resolve, $d.reject);
     return $d;
@@ -11,7 +11,7 @@ function Promise(async_task){
 }
 
 function _end_callback(resolve, reject) {
-  return function(err, res) {
+  return function (err, res) {
     if (err) {
       console.error(err);
       reject('请求失败！');
@@ -19,16 +19,16 @@ function _end_callback(resolve, reject) {
     }
     if (res.ok) {
       var { error_code, error_msg, data } = res.body;
-      if(error_code != undefined){
-        if (error_code === 200001 || error_code === 200002 || error_code === 200003 || error_code === 0 ) {
+      if (error_code != undefined) {
+        if (error_code === 200001 || error_code === 200002 || error_code === 200003 || error_code === 0) {
           resolve(data, error_msg);
-        }else if(error_code === 400002){
+        } else if (error_code === 400002) {
           sessionStorage.clear();
-        }else {
+        } else {
           console.error(error_msg || 'request error');
           reject(error_msg, error_code);
         }
-      }else{
+      } else {
         console.error(error_msg || 'request error');
         reject(error_msg, error_code);
       }
@@ -41,7 +41,7 @@ function _end_callback(resolve, reject) {
 //基本封装
 export function get(url, data) {
   var r;
-  var p = new Promise(function(resolve, reject) {
+  var p = new Promise(function (resolve, reject) {
     r = req.get(url)
       .query(data)
       .end(_end_callback(resolve, reject));
